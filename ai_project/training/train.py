@@ -4,7 +4,7 @@ import time
 import math
 import numpy as np
 import torch
-from torch.cuda.amp import GradScaler, autocast
+from torch.amp import GradScaler, autocast
 
 from ai_project.models.model import PhoenixTransformer, PhoenixModelArgs
 from ai_project.tokenizer.tokenizer_trainer import PhoenixTokenizer
@@ -112,7 +112,7 @@ def main():
     
     # Setup optimizer and AMP scaler
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
-    scaler = GradScaler(enabled=(device == "cuda"))
+    scaler = GradScaler(device=device, enabled=(device == "cuda"))
     
     # Eval loop function
     @torch.no_grad()
@@ -125,7 +125,7 @@ def main():
             losses = torch.zeros(args.eval_iters)
             for k in range(args.eval_iters):
                 x, y = loader.get_batch(device)
-                with autocast(enabled=(device == "cuda")):
+                with autocast(device_type="cuda" if device == "cuda" else "cpu", enabled=(device == "cuda")):
                     _, loss = model(x, y)
                 losses[k] = loss.item()
             out[split] = losses.mean().item()
@@ -170,7 +170,7 @@ def main():
         
         for micro_step in range(args.gradient_accumulation_steps):
             x, y = train_loader.get_batch(device)
-            with autocast(enabled=(device == "cuda")):
+            with autocast(device_type="cuda" if device == "cuda" else "cpu", enabled=(device == "cuda")):
                 _, loss = model(x, y)
                 # Scale loss to account for gradient accumulation
                 loss = loss / args.gradient_accumulation_steps

@@ -4,6 +4,7 @@ from pathlib import Path
 from ai_project.inference.engine import PhoenixInferenceEngine
 from ai_project.memory.vector_db import PhoenixMemoryStore
 from ai_project.agents.sandbox import PhoenixSandbox
+from ai_project.utils.path_safety import resolve_safe_path
 
 class PhoenixAgent:
     """
@@ -18,15 +19,9 @@ class PhoenixAgent:
         self.workspace_dir = Path(workspace_dir).resolve()
 
     def _resolve_safe_path(self, rel_path: str) -> Path:
-        """
-        Validates paths to prevent directory traversal attacks.
-        Throws a PermissionError if the target lies outside the workspace directory.
-        """
-        # Resolve path relative to workspace
-        target = (self.workspace_dir / rel_path).resolve()
-        if not target.is_relative_to(self.workspace_dir):
-            raise PermissionError(f"Access Denied: Path '{rel_path}' is outside workspace boundaries.")
-        return target
+        """Deprecated: Use resolve_safe_path directly. Replaced for backwards compatibility."""
+        return resolve_safe_path(self.workspace_dir, rel_path)
+
 
     def run_loop(self, user_query: str, max_steps: int = 5) -> str:
         """
@@ -71,7 +66,7 @@ class PhoenixAgent:
                 tool_called = True
                 file_path = read_match.group(1).strip()
                 try:
-                    target_path = self._resolve_safe_path(file_path)
+                    target_path = resolve_safe_path(self.workspace_dir, file_path)
                     if target_path.exists():
                         with open(target_path, "r", encoding="utf-8") as f:
                             tool_output = f"<file_content path=\"{file_path}\">\n{f.read()}\n</file_content>"
@@ -85,7 +80,7 @@ class PhoenixAgent:
                 file_path = write_match.group(1).strip()
                 content = write_match.group(2)
                 try:
-                    target_path = self._resolve_safe_path(file_path)
+                    target_path = resolve_safe_path(self.workspace_dir, file_path)
                     os.makedirs(target_path.parent, exist_ok=True)
                     with open(target_path, "w", encoding="utf-8") as f:
                         f.write(content)

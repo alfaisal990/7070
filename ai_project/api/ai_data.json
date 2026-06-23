@@ -1,0 +1,95 @@
+{
+  "categories": [
+    {
+      "id": "gen_ai",
+      "name": "الذكاء الاصطناعي التوليدي (Generative AI)",
+      "description": "نماذج قادرة على توليد نصوص، صور، أكواد برمجية، أو أوساط متعددة جديدة بناءً على سياق المدخلات.",
+      "models": [
+        {
+          "name": "GPT-4o",
+          "developer": "OpenAI",
+          "type": "Multimodal LLM",
+          "parameters": "1.8T (Estimated)",
+          "use_case": "توليد النصوص، تحليل الأكواد، المحادثات الذكية، فهم الصور."
+        },
+        {
+          "name": "Gemini 1.5 Pro",
+          "developer": "Google",
+          "type": "Multimodal MoE",
+          "parameters": "Confidential",
+          "use_case": "معالجة سياقات ضخمة تصل لمليون رمز، فهم الفيديوهات الطويلة، الترجمة والتحليل."
+        },
+        {
+          "name": "Stable Diffusion 3",
+          "developer": "Stability AI",
+          "type": "Diffusion Model",
+          "parameters": "8B",
+          "use_case": "توليد صور واقعية وفنية عالية الدقة بناءً على أوامر نصية."
+        }
+      ]
+    },
+    {
+      "id": "nlp",
+      "name": "معالجة اللغات الطبيعية (NLP)",
+      "description": "الأنظمة التي تمكن الحواسيب من فهم النصوص واللغات البشرية المكتوبة والمنطوقة وتحليلها.",
+      "models": [
+        {
+          "name": "BERT",
+          "developer": "Google",
+          "type": "Encoder-only Transformer",
+          "parameters": "340M",
+          "use_case": "فهم معاني الكلمات ثنائي الاتجاه، محركات البحث، استخراج الكيانات."
+        },
+        {
+          "name": "Llama 3",
+          "developer": "Meta",
+          "type": "Decoder-only Transformer",
+          "parameters": "8B / 70B / 405B",
+          "use_case": "المحادثة المحلية الآمنة، تلخيص النصوص، المساعدة البرمجية الخاصة."
+        }
+      ]
+    },
+    {
+      "id": "computer_vision",
+      "name": "الرؤية الحاسوبية (Computer Vision)",
+      "description": "تمكين الآلات من استخراج معلومات وتفاصيل دقيقة من الصور الرقمية ومقاطع الفيديو.",
+      "models": [
+        {
+          "name": "YOLOv8",
+          "developer": "Ultralytics",
+          "type": "Object Detection",
+          "parameters": "68M",
+          "use_case": "تحديد وتتبع الأجسام في الوقت الفعلي بدقة وسرعة فائقة."
+        },
+        {
+          "name": "ResNet-50",
+          "developer": "Microsoft",
+          "type": "CNN (Convolutional)",
+          "parameters": "25.6M",
+          "use_case": "تصنيف الصور وتحديد الفئات الفرعية للمشاهد المعروضة."
+        }
+      ]
+    },
+    {
+      "id": "reinforcement_learning",
+      "name": "التعلم التعزيزي (Reinforcement Learning)",
+      "description": "تدريب النماذج على اتخاذ قرارات متتالية لتحقيق أقصى مكافأة في بيئة تفاعلية محددة.",
+      "models": [
+        {
+          "name": "AlphaGo",
+          "developer": "Google DeepMind",
+          "type": "MCTS / Policy-Value Network",
+          "parameters": "N/A",
+          "use_case": "التخطيط الاستراتيجي وحل الألعاب المعقدة ذات الاحتمالات اللانهائية."
+        },
+        {
+          "name": "PPO (Proximal Policy Optimization)",
+          "developer": "OpenAI",
+          "type": "Policy Gradient Method",
+          "parameters": "N/A",
+          "use_case": "ضبط النماذج اللغوية عبر التقييم البشري RLHF، والتحكم بالروبوتات."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "docker_present": true,
+  "docker_compose_present": true,
+  "compose_schema_valid": true,
+  "ports_free": true,
+  "nginx_config_present": true
+}

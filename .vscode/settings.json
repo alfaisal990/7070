@@ -1,0 +1,10 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "python.pythonPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/.venv/Lib/site-packages"
+  ],
+  "pyrefly.pythonInterpreter": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "css.lint.unknownAtRules": "ignore",
+  "opencodegraph.enable": true
+}

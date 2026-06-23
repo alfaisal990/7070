@@ -6,6 +6,13 @@ from ai_project.models.model import PhoenixTransformer, PhoenixModelArgs
 from ai_project.memory.vector_db import PhoenixMemoryStore
 
 def test_memory_store_retrieval():
+    import torch
+    import numpy as np
+    import random
+    torch.manual_seed(0)
+    np.random.seed(0)
+    random.seed(0)
+
     with tempfile.TemporaryDirectory() as tmpdir:
         # 1. Create a dummy tokenizer
         dummy_code = "print('hello')\n"
@@ -48,3 +55,27 @@ def test_memory_store_retrieval():
         new_store = PhoenixMemoryStore(model, tokenizer, db_path=db_path, device="cpu")
         assert len(new_store.memories) == 3
         assert new_store.memories[0]["text"] == store.memories[0]["text"]
+
+        # 7. Verify migration manager export functions
+        from ai_project.memory.vector_migration import VectorDBMigrationManager
+        mig_mgr = VectorDBMigrationManager(db_path=db_path)
+        
+        faiss_data = mig_mgr.export_to_faiss()
+        assert faiss_data["status"] == "success"
+        assert faiss_data["vectors_shape"] == (3, 32)
+        assert len(faiss_data["payloads"]) == 3
+
+        hnsw_data = mig_mgr.export_to_hnsw()
+        assert hnsw_data["status"] == "success"
+        assert len(hnsw_data["labels"]) == 3
+
+        qdrant_points = mig_mgr.export_to_qdrant()
+        assert len(qdrant_points) == 3
+        assert qdrant_points[0]["id"] == 0
+        assert "text" in qdrant_points[0]["payload"]
+
+        rep = mig_mgr.generate_migration_report()
+        assert rep["num_records"] == 3
+        assert rep["vector_dimension"] == 32
+        assert "JSON Memory Store" in rep["recommended_target"]
+

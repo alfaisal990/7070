@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ai_project/memory:/app/ai_project/memory
+      - ./ai_project/training/checkpoints:/app/ai_project/training/checkpoints
+      - ./ai_project/training/sft_checkpoints:/app/ai_project/training/sft_checkpoints
+    environment:
+      - PHOENIX_WORKSPACE=/app
+      - PYTHONUNBUFFERED=1
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend

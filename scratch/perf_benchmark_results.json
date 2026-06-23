@@ -1,0 +1,18 @@
+{
+  "inference": {
+    "tokens": 52,
+    "time_sec": 1.579667091369629,
+    "tokens_per_sec": 32.918328351649144
+  },
+  "memory_search": {
+    "dense_ms": 28.73706817626953,
+    "hybrid_ms": 24.115959803263348,
+    "graph_ms": 22.726774215698242
+  },
+  "api_latency": {
+    "health_ms": 6.005048751831055,
+    "metrics_ms": 4.314422607421875,
+    "memory_get_ms": 4.361152648925781,
+    "sandbox_ms": 56.719303131103516
+  }
+}

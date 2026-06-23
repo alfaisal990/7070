@@ -3,7 +3,7 @@ import json
 import argparse
 import time
 import torch
-from torch.cuda.amp import GradScaler, autocast
+from torch.amp import GradScaler, autocast
 from torch.utils.data import Dataset, DataLoader
 
 from ai_project.models.model import PhoenixTransformer, PhoenixModelArgs
@@ -73,6 +73,8 @@ def main():
     parser.add_argument("--learning_rate", type=float, default=5e-5)
     parser.add_argument("--max_seq_len", type=int, default=1024)
     parser.add_argument("--device", type=str, default="cuda")
+    parser.add_argument("--lora_r", type=int, default=0, help="LoRA rank. If > 0, LoRA fine-tuning is enabled.")
+    parser.add_argument("--lora_alpha", type=int, default=16, help="LoRA alpha scaling factor.")
     
     args = parser.parse_args()
     device = args.device if torch.cuda.is_available() else "cpu"
@@ -99,8 +101,16 @@ def main():
     model = PhoenixTransformer(model_args).to(device)
     model.load_state_dict(checkpoint["model_state"])
     
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate, weight_decay=0.01)
-    scaler = GradScaler(enabled=(device == "cuda"))
+    # Apply LoRA if requested
+    if args.lora_r > 0:
+        from ai_project.models.model import apply_lora_to_model
+        trainable_params = apply_lora_to_model(model, r=args.lora_r, alpha=args.lora_alpha)
+        print(f"SFT: Applied LoRA (r={args.lora_r}, alpha={args.lora_alpha}). Trainable parameters: {trainable_params}")
+    else:
+        print("SFT: Performing full-parameter SFT training.")
+        
+    optimizer = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad], lr=args.learning_rate, weight_decay=0.01)
+    scaler = GradScaler(device=device, enabled=(device == "cuda"))
     
     model.train()
     print("SFT: Starting instruction fine-tuning...")
@@ -113,7 +123,7 @@ def main():
             x, y = x.to(device), y.to(device)
             
             optimizer.zero_grad(set_to_none=True)
-            with autocast(enabled=(device == "cuda")):
+            with autocast(device_type="cuda" if device == "cuda" else "cpu", enabled=(device == "cuda")):
                 # The model computes SFT loss directly when targets are passed
                 _, loss = model(x, y)
                 
@@ -134,7 +144,9 @@ def main():
             "model_state": model.state_dict(),
             "model_args": model_args,
             "epoch": epoch,
-            "args": args
+            "args": args,
+            "lora_r": getattr(args, "lora_r", 0),
+            "lora_alpha": getattr(args, "lora_alpha", 0),
         }
         torch.save(sft_checkpoint, os.path.join(args.out_dir, "sft_latest.pt"))
         print(f"Saved SFT checkpoint for epoch {epoch+1}")
